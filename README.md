@@ -151,7 +151,7 @@ def run_analysis(cfg: Config) -> tuple[pd.DataFrame, pd.DataFrame]:
 ## acknowledgments
 - data provided by [yahoo finance](https://finance.yahoo.com/)
 - built with [yfinance](https://github.com/ranaroussi/yfinance) library
-- inspired by my assignment for the ibm data analyst professional certificate program. it has been significantly extended, refactored, and automated to serve as a fully functional and reproducible portfolio project
+- inspired by my assignment from the ibm data analyst professional certificate program. it has been significantly extended, refactored, and automated to serve as a fully functional and reproducible portfolio project
 
 ## license
 this project is released under the **mit license**.  
