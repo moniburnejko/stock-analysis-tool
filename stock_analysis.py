@@ -122,16 +122,11 @@ def summarize(df: pd.DataFrame) -> pd.DataFrame:
     - price range (min and max)
     - total return over the period
     - daily return statistics (mean and standard deviation)
-	
-	prefer adjusted close if available.
 	""" 
-    if 'Adj Close' in df.columns:
-        close = df['Adj Close'].squeeze()
-    else:
-        close = df['Close'].squeeze()
-
+    close = df.get('Adj Close', df['Close']).squeeze()
     returns = df['return_daily'].dropna()
 
+    # calculates key statistics including: dataset size, date range, price range, total return over the period, daily return statistics
     stats = {
         'Rows': len(df),
         'Start Date': df.index[0].strftime('%Y-%m-%d'),
@@ -139,13 +134,17 @@ def summarize(df: pd.DataFrame) -> pd.DataFrame:
         'Start Price': float(close.iloc[0]),
         'End Price': float(close.iloc[-1]),
         'Total Return (%)': float((close.iloc[-1] / close.iloc[0] - 1) * 100),
-        'Daily Return Mean (%)': returns.mean() * 100,
-        'Daily Return Std (%)': returns.std() * 100,
+        'Daily Return Mean (%)': float(returns.mean() * 100),
+        'Daily Return Std (%)': float(returns.std() * 100),
         'Min Price': float(close.min()),
-        'Max Price': float(close.max())
+        'Max Price': float(close.max()),
     }
 
-    return pd.DataFrame([stats]).T.rename(columns={0: 'Value'}).round(2)
+    df_out = pd.DataFrame([stats]).T.rename(columns={0: 'Value'})
+    nums = pd.to_numeric(df_out['Value'], errors='coerce')
+    df_out['Value'] = df_out['Value'].where(nums.isna(), nums.round(2))
+
+    return df_out
 
 
 def run_analysis(cfg: Config):
