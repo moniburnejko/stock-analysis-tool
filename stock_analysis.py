@@ -138,7 +138,7 @@ def summarize(df: pd.DataFrame) -> pd.DataFrame:
         'End Date': df.index[-1].strftime('%Y-%m-%d'),
         'Start Price': float(close.iloc[0]),
         'End Price': float(close.iloc[-1]),
-        'Total Return (%)': float(((close.iloc[-1]) / (close.iloc[0]) - 1) * 100),
+        'Total Return (%)': float((close.iloc[-1] / close.iloc[0] - 1) * 100),
         'Daily Return Mean (%)': returns.mean() * 100,
         'Daily Return Std (%)': returns.std() * 100,
         'Min Price': float(close.min()),
