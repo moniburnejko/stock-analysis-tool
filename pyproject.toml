@@ -11,6 +11,35 @@ dependencies = [
     "pandas"
 ]
 
+[dependency-groups]
+dev = [
+    "mypy>=1.19.1",
+    "ruff>=0.14.10",
+    "pytest>=9.0.2",
+]
+
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
+
+[tool.mypy]
+python_version = "3.14"
+ignore_missing_imports = true
+strict = true
+mypy_path = "src"
+exclude = ["tests"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "C90", "B", "A", "UP"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-ra -v"
