@@ -44,7 +44,7 @@ python run_analysis.py
 ```python
 from stock_analysis_tool import Config, run_analysis
 
-cfg = Config()  # default: ticker='AMZN', period='5y', interval='1d', sma_window=20
+cfg = Config()  # Uses default values
 df, stats = run_analysis(cfg)
 ```
 
