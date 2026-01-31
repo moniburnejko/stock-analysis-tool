@@ -1,0 +1,16 @@
+[project]
+name = "stock-analysis-tool"
+version = "0.2.0"
+description = "A tool for analyzing stock data."
+requires-python = ">=3.14"
+dependencies = [
+    "ruff",
+    "mypy",
+    "requests",
+    "matplotlib",
+    "pandas"
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
