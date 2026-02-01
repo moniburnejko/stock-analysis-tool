@@ -1,169 +1,156 @@
-# stock analysis tool
-### python • yfinance api • data visualization • technical analysis
+## stock analysis tool 💸
 
-a python-based stock market analysis tool.
-it fetches financial data from yahoo finance, calculates technical indicators (daily returns and moving averages), generates charts, exports results, and summarizes key metrics.
+minimal script for pulling market data from yahoo finance (`yfinance`), computing a few basics (daily return + sma), and exporting a csv + a clean, dark chart.
 
-for the complete walkthrough of the workflow and outputs, see ➡️ [`stock_analysis.ipynb`](./stock_analysis.ipynb)
+---
 
-## 📁 repository structure
-```
-stock-analysis-tool/
-├── stock_analysis.ipynb        # notebook walkthrough
-├── stock_analysis.py           # core python module
-├── requirements.txt            # python dependencies
-├── README.md                   # project overview (this file)
-├── .gitignore                  # git ignore rules
-├── LICENSE                     # mit license
-├── examples/                   # example outputs
-│   └── AMZN_price_sma.png
-└── stock_data/                 # generated data (gitignored)
-    ├── AMZN.csv
-    └── AMZN_price_sma.png
-```
+### what the script does
 
-## quick start
-### installation
-1. **clone the repository**
+- downloads price history via `yfinance`
+- normalizes a close series (prefers adjusted close; falls back to close)
+- adds:
+  - `return_daily`
+  - `sma_<window>`
+- saves csv + png
+- prints a small summary table (date range, min/max, total return, daily mean/std)
+
+---
+### plot style
+
+the look is controlled by `PLOT_THEME` in `src/stock_analysis.py` (dark, trading-ish palette). the goal is readability without noise: clean lines, calm grid, consistent colors.
+
+---
+
+### output
+
+output files are written into `stock_data/`:
+
+- `stock_data/<ticker>.csv` (raw data + `return_daily` and `sma_<window>`)
+- `stock_data/<ticker>_price_sma.png` (price + sma chart)
+---
+
+### tooling
+
+- `uv`: env + installs + running commands
+- `ty`: type checking
+- `ruff`: linting + formatting
+- `pytest`: tests
+---
+
+### quick start
+
+#### clone
+
 ```bash
 git clone https://github.com/moniburnejko/stock-analysis-tool.git
 cd stock-analysis-tool
 ```
-3. **install dependencies**
+---
+#### setup (uv)
+
+pin python for this repo (optional but recommended):
+
 ```bash
-pip install -r requirements.txt
+uv python pin 3.14
 ```
-3. **run the notebook**
+
+create/sync the venv + install dev tools:
+
 ```bash
-jupyter notebook stock_analysis.ipynb
+uv sync --dev
 ```
-4. **or run the script**
+---
+#### run
+
+`config` defaults live in `src/stock_analysis.py`.
+
 ```bash
-python stock_analysis.py
-```
-    
-### example workflows
-**example 1 - analyze amazon with default parameters**
-```python
-from stock_analysis import Config, run_analysis
-
-cfg = Config()  # default: ticker = 'AMZN', period = '5y', interval = '1d', sma_window = 20, our_dir = Path('stock_data'), show_plots = True
-df, stats = run_analysis(cfg)
-```
-**example 2 - change ticker and period**
-```python
-df, stats = run_analysis(Config(ticker='AAPL', period='2y'))
-```
-**example 3 - weekly analysis with longer sma**
-```python
-cfg = Config(
-    ticker='TSLA',
-    period='max',
-    interval='1wk',
-    sma_window=100,
-    show_plots=True
-)
-df, stats = run_analysis(cfg)
-```
-**example 4 - multi-stock analysis**
-```python
-tickers = ['ORCL', 'NVDA', 'MSFT', 'IBM']
-
-for ticker in tickers:
-    cfg = Config(ticker=ticker, period='2y', sma_window=50)
-    df, stats = run_analysis(cfg)
+uv run python src/stock_analysis.py
 ```
 
-## output examples
-### generated statistics
-|                    | Value       |
-|------------------------|-------------|
-| Rows                   | 1256.0      |
-| Start Date             | 2020-10-26  |
-| End Date               | 2025-10-24  |
-| Start Price            | 160.35      |
-| End Price              | 224.21      |
-| Total Return (%)       | 39.82       |
-| Daily Return Mean (%)  | 0.05        |
-| Daily Return Std (%)   | 2.21        |
-| Min Price              | 81.82       |
-| Max Price              | 242.06      |
-### sample visualization
-*price chart with 20-day simple moving average overlay*
-![example chart](examples/AMZN_price_sma.png)
+note: if you prefer module execution, it also works after setup:
 
-## technologies
-- **python 3.13+** - core programming language
-- **pandas** - data manipulation and analysis
-- **yfinance** - yahoo finance api wrapper
-- **matplotlib** - data visualization
-- **jupyter notebook** - interactive development environment
-
-## advanced features
-### available functions
-- `fetch_prices()` - download historical stock data
-- `add_metrics()` - calculate technical indicators
-- `save_csv()` - export data to csv
-- `plot_price_sma()` - generate price charts
-- `summarize()` - compute statistical summary
-- `run_analysis()` - complete analysis pipeline
-
-### error handling
-the tool includes robust error handling for:
-- invalid ticker symbols
-- network failures
-- missing data
-- empty datasets
-
-```python
-try:
-    cfg = Config(ticker='INVALID')
-    df, stats = run_analysis(cfg)
-except RuntimeError as e:
-    print(f"Analysis failed: {e}")
+```bash
+uv run python -m stock_analysis
 ```
-
-## api reference
-### config class
-```python
-@dataclass
-class Config:
-    """configuration for stock analysis parameters"""
-    ticker: str = 'AMZN'
-    period: str = '5y'
-    interval: str = '1d'
-    sma_window: int = 20
-    out_dir: Path = Path('stock_data')
-    show_plots: bool = True
-```
-### core functions
-```python
-def fetch_prices(ticker: str, period: str, interval: str) -> pd.DataFrame:
-    """fetch historical stock prices from yahoo finance"""
-    
-def add_metrics(df: pd.DataFrame, sma_window: int) -> pd.DataFrame:
-    """add technical indicators (sma, returns) to dataframe"""
-    
-def run_analysis(cfg: Config) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """execute complete analysis workflow"""
-```
-
-## acknowledgments
-- data provided by [yahoo finance](https://finance.yahoo.com/)
-- built with [yfinance](https://github.com/ranaroussi/yfinance) library
-- inspired by my assignment from the ibm data analyst professional certificate program. it has been significantly extended, refactored, and automated to serve as a fully functional and reproducible portfolio project
-
-## license
-this project is released under the **mit license**.  
-
-## connect
-👩‍💻 **Monika Burnejko**  
-*data analyst in training | python • pandas • yfinance • data viz*
-<br>📧 [moniburnejko@gmail.com](mailto:moniburnejko@gmail.com)  
-💼 [linkedin](https://www.linkedin.com/in/monika-burnejko-9301a1357)  
-🌐 [portfolio](https://www.notion.so/monikaburnejko/Data-Analytics-Portfolio-2761bac67ca9807298aee038976f0085?pvs=9)
 
 ---
-<p align="center">
-🌟 if you found this project helpful, please consider giving it a star! 🌟
-</p>
+
+### workflows (examples)
+
+the script is intentionally cli-light; each workflow below shows two options: (a) quick code tweak, (b) terminal command.
+
+#### 1) change ticker + period
+
+option a: edit `src/stock_analysis.py` (in `main()`)
+
+```python
+config = Config(ticker="aapl", period="1y")
+run_analysis(config)
+```
+
+option b: terminal
+
+```bash
+uv run python -c 'from stock_analysis import Config, run_analysis; run_analysis(Config(ticker="aapl", period="1y"))'
+```
+
+#### 2) weekly analysis with longer sma
+
+option a: edit `src/stock_analysis.py` (in `main()`)
+
+```python
+config = Config(ticker="amzn", period="10y", interval="1wk", sma_window=50)
+run_analysis(config)
+```
+
+option b: terminal
+
+```bash
+uv run python -c 'from stock_analysis import Config, run_analysis; run_analysis(Config(ticker="amzn", period="10y", interval="1wk", sma_window=50))'
+```
+
+#### 3) multi-stock analysis (4 tickers)
+
+option a: edit `src/stock_analysis.py` (in `main()`)
+
+```python
+for t in ["amzn", "aapl", "msft", "nvda"]:
+    run_analysis(Config(ticker=t, period="2y"))
+```
+
+option b: terminal
+
+```bash
+uv run python -c 'from stock_analysis import Config, run_analysis; [run_analysis(Config(ticker=t, period="2y")) for t in ["amzn","aapl","msft","nvda"]]'
+```
+
+---
+
+### tests (pytest)
+
+```bash
+uv run python -m pytest
+```
+
+### checks
+
+```bash
+uv run ty check
+uv run ruff check .
+uv run ruff format .
+```
+
+---
+
+### note
+
+this project was inspired by a small ibm data analyst course assignment. i first turned it into a standalone script, and later gave it a proper refresh with newer, commonly used tooling and cleaner patterns.
+
+---
+
+### 💌 let’s connect!
+
+[![email](https://img.shields.io/badge/email-FFB6C1?style=for-the-badge&logo=gmail&logoColor=424B54)](mailto:moniburnejko@gmail.com)
+[![linkedin](https://img.shields.io/badge/linkedin-FFB6C1?style=for-the-badge&logo=linkedin&logoColor=424B54)](https://www.linkedin.com/in/monika-burnejko-9301a1357)
+[![kaggle](https://img.shields.io/badge/kaggle-FFB6C1?style=for-the-badge&logo=kaggle&logoColor=424B54e)](https://www.kaggle.com/monikaburnejko)
