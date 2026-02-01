@@ -4,16 +4,14 @@ version = "0.2.0"
 description = "A tool for analyzing stock data."
 requires-python = ">=3.14"
 dependencies = [
-    "ruff",
-    "mypy",
-    "requests",
+    "yfinance",
     "matplotlib",
-    "pandas"
+    "pandas",
 ]
 
-[dependency-groups]
+[project.optional-dependencies]
 dev = [
-    "mypy>=1.19.1",
+    "ty>=0.0.14",
     "ruff>=0.14.10",
     "pytest>=9.0.2",
 ]
@@ -22,12 +20,12 @@ dev = [
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
-[tool.mypy]
-python_version = "3.14"
-ignore_missing_imports = true
-strict = true
-mypy_path = "src"
-exclude = ["tests"]
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ty.environment]
+python-version = "3.14"
+root = ["src"]
 
 [tool.ruff]
 line-length = 88
@@ -39,7 +37,7 @@ select = ["E", "F", "I", "W", "C90", "B", "A", "UP"]
 [tool.ruff.format]
 quote-style = "double"
 
-[tool.pytest.ini_options]
-pythonpath = ["src"]
+[tool.pytest]
+addopts = ["-ra", "-v"]
 testpaths = ["tests"]
-addopts = "-ra -v"
+pythonpath = ["src"]

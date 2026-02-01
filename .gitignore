@@ -1,8 +1,3 @@
-# Output files
-stock_data/
-*.csv
-*.png
-
 # Python
 __pycache__/
 *.py[cod]
@@ -24,6 +19,7 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+.python-version
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -57,3 +53,20 @@ Thumbs.db
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Tool caches
+.ruff_cache/
+.mypy_cache/
+.ty_cache/
+.ty/
+
+# Env files
+.env
+.env.*
+
+# Output files
+*.csv
+*.png
+!stock_data/
+!stock_data/**/*.csv
+!stock_data/**/*.png
